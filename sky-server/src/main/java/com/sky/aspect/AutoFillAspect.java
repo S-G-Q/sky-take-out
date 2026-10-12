@@ -6,7 +6,6 @@ import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -54,7 +53,7 @@ public class AutoFillAspect {
         LocalDateTime now = LocalDateTime.now();
         Long currentId = BaseContext.getCurrentId();
 
-        //根据不同 的操作类型，为对对应的属性通过反射来赋值
+        //根据不同 的操作类型，为对应的属性通过反射来赋值
         if(operationType == OperationType.INSERT){
             //INSERT操作类型，需要对createTime、updateTime、createUser、updateUser、status进行赋值
             try{
@@ -64,7 +63,7 @@ public class AutoFillAspect {
                 Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
                 //通过反射赋值
-                setCreateTime.invoke(entity, now);
+                setCreateTime.invoke(entity, now);//不能用entity.setCreateTime(now);因为编译看左边，Object类型，没有setCreateTime方法，所以用反射调用
                 setCreateUser.invoke(entity, currentId);
                 setUpdateTime.invoke(entity, now);
                 setUpdateUser.invoke(entity, currentId);
