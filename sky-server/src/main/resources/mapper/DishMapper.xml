@@ -10,6 +10,38 @@
         (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{createUser},#{updateTime},#{updateUser},#{status})
     </insert>
 
+    <update id="update">
+        update dish
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByIds">
+        delete from dish where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="pageQuery" resultType="com.sky.vo.DishVO">
         select d.*, c.name as category_name from dish d left outer join category c on d.category_id = c.id
         <where>
@@ -25,4 +57,17 @@
         </where>
         order by d.id desc
            </select>
+    <select id="list" resultType="Dish" parameterType="Dish">
+        select * from dish
+        <where>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
 </mapper>
